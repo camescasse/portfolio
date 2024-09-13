@@ -1,0 +1,142 @@
+@import url("https://fonts.cdnfonts.com/css/jetbrains-mono-2");
+
+:root {
+  --font-family: "JetBrains Mono", monospace;
+  --line-height: 1.2rem;
+  --text-color: #eee;
+  --secondary-text-color: #aaa;
+  --third-text-color: #666;
+  --background-color: #030303;
+  --avatar-size: 15ch;
+
+  --font-weight-normal: 500;
+  --font-weight-medium: 600;
+  --font-weight-bold: 800;
+
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-normal);
+  font-style: normal;
+  font-size: 16px;
+}
+
+html {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  align-items: center;
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+body {
+  width: 100%;
+  position: relative;
+  margin: calc(3 * var(--line-height)) 0;
+  padding: var(--line-height) 2ch;
+  max-width: calc(min(80ch, round(down, 100%, 1ch)));
+}
+
+.about,
+.essays,
+.projects,
+.experience,
+.links {
+  margin: calc(2.5 * var(--line-height)) 0;
+}
+
+@media screen and (max-width: 480px) {
+  :root {
+    font-size: 14px;
+  }
+  body {
+    padding: var(--line-height) 1ch;
+  }
+}
+
+.header {
+  height: var(--avatar-size);
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  float: left;
+  margin-right: 2ch;
+}
+
+.avatar img {
+  display: block;
+  width: 100%;
+  object-fit: contain;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.blog-content img {
+  width: 60%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+a {
+  text-decoration: none;
+  transition: text-decoration-thickness 1s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
+  text-decoration-thickness: 0.125rem;
+}
+
+a,
+a:visited,
+a:active,
+a:hover,
+a:focus {
+  color: var(--text-color);
+}
+
+a::after {
+  content: url("../images/arrow-link.svg");
+  vertical-align: text-bottom;
+}
+
+.blog a::after {
+  content: "";
+}
+
+.description,
+.about-content,
+.project-description,
+.job-description,
+.blog-content p {
+  color: var(--secondary-text-color);
+}
+
+.project-name,
+.date,
+.job-stack,
+.social-network,
+.blog-header,
+.blog a {
+  color: var(--third-text-color);
+}
+
+.blog-header {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  padding-left: 0;
+  margin-left: 0;
+  font-size: 0.8rem;
+}
+
+.blog-header li:nth-child(2) {
+  margin-left: 1ch;
+  margin-right: 1ch;
+}
