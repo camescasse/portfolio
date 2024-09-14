@@ -43,13 +43,14 @@ body {
 .projects,
 .experience,
 .links {
-  margin: calc(2.5 * var(--line-height)) 0;
+  margin: calc(3 * var(--line-height)) 0;
 }
 
-@media screen and (min-width: 480px) {
-  :root {
-    font-size: 16px;
-  }
+.blog-entry,
+.project-description,
+.job-stack,
+.social-handle {
+  margin-bottom: calc(2 * var(--line-height));
 }
 
 .header {
@@ -122,10 +123,11 @@ a::after {
   color: var(--secondary-text-color);
 }
 
-.project-name,
-.date,
+.project-entry,
+.blog-date,
+.job-date,
 .job-stack,
-.social-network,
+.social-entry,
 .blog-header,
 .blog a {
   color: var(--third-text-color);
@@ -143,4 +145,22 @@ a::after {
 .blog-header li:nth-child(2) {
   margin-left: 1ch;
   margin-right: 1ch;
+}
+
+@media screen and (min-width: 480px) {
+  :root {
+    font-size: 16px;
+  }
+
+  .essays {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    justify-items: left;
+    align-items: center;
+  }
+
+  .essays-title,
+  .blog-archive {
+    grid-column: 1 / 3;
+  }
 }
