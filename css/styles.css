@@ -115,6 +115,10 @@ a::after {
   content: "";
 }
 
+.back-home {
+  margin-top: calc(2 * var(--line-height));
+}
+
 .description,
 .about-content,
 .project-description,
