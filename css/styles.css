@@ -16,7 +16,7 @@
   font-family: var(--font-family);
   font-weight: var(--font-weight-normal);
   font-style: normal;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 html {
@@ -35,6 +35,7 @@ body {
   margin: calc(3 * var(--line-height)) 0;
   padding: var(--line-height) 2ch;
   max-width: calc(min(80ch, round(down, 100%, 1ch)));
+  box-sizing: border-box;
 }
 
 .about,
@@ -45,12 +46,9 @@ body {
   margin: calc(2.5 * var(--line-height)) 0;
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (min-width: 480px) {
   :root {
-    font-size: 14px;
-  }
-  body {
-    padding: var(--line-height) 1ch;
+    font-size: 16px;
   }
 }
 
@@ -106,7 +104,13 @@ a::after {
   vertical-align: text-bottom;
 }
 
-.blog a::after {
+.blog-archive {
+  font-size: 0.8rem;
+  color: var(--third-text-color);
+}
+
+.blog a::after,
+.blog-archive::after {
   content: "";
 }
 
