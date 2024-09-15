@@ -134,11 +134,7 @@ a::after {
 .social-entry,
 .blog-header,
 .blog a,
-.projects .project-entry a,
-.projects .project-entry a:visited,
-.projects .project-entry a:active,
-.projects .project-entry a:hover,
-.projects .project-entry a:focus {
+.projects .project-entry a {
   color: var(--third-text-color);
 }
 
