@@ -128,6 +128,7 @@ a::after {
 }
 
 .project-entry,
+.project-entry a,
 .blog-date,
 .job-date,
 .job-stack,
