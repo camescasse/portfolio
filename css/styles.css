@@ -128,12 +128,12 @@ a::after {
 }
 
 .project-entry,
-.project-entry a,
 .blog-date,
 .job-date,
 .job-stack,
 .social-entry,
 .blog-header,
+.project-entry a,
 .blog a {
   color: var(--third-text-color);
 }
