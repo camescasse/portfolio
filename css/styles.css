@@ -133,8 +133,12 @@ a::after {
 .job-stack,
 .social-entry,
 .blog-header,
+.blog a,
 .projects .project-entry a,
-.blog a {
+.projects .project-entry a:visited,
+.projects .project-entry a:active,
+.projects .project-entry a:hover,
+.projects .project-entry a:focus {
   color: var(--third-text-color);
 }
 
