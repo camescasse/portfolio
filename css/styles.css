@@ -138,6 +138,10 @@ a::after {
   color: var(--third-text-color);
 }
 
+.testdep {
+  color: var(--third-text-color);
+}
+
 .blog-header {
   display: flex;
   list-style: none;
