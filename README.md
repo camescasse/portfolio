@@ -1,15 +1,43 @@
-# camescasse.dev: Portfolio
+# camescasse.dev: portfolio
 
-Welcome to my personal website repository! This is a simple static site built with HTML and CSS, featuring a personal blog.
+Personal portfolio and blog built with Astro.
 
-This website serves as my online portfolio and blog. You can find information about my projects, interests, and thoughts on various topics.
+The site keeps a minimal, terminal-inspired style with a static output, but content is now markdown-driven so it is easier to maintain and expand.
 
-It is currently hosted on a VPS to free myself from the shackles of serverless deployment.
+Live site: https://camescasse.dev/
 
-Visit the live site at: https://camescasse.dev/
+## Stack
 
-## Features
+- Astro (static output)
+- Berkeley Mono (self-hosted font)
+- Markdown content collections (blog, about, projects, work experience)
+- pnpm
+- Docker + Nginx (for container deploys)
 
-- Static Pages: Simple and fast-loading static HTML pages
-- Responsive Design: Optimized for both desktop and mobile devices.
-- Personal Blog: A section dedicated to my blog posts.
+## Local development
+
+```sh
+pnpm install
+pnpm dev
+```
+
+Build for production:
+
+```sh
+pnpm build
+```
+
+## Content structure
+
+- Blog posts: `src/content/blog/*.md`
+- About: `src/content/about/about.md`
+- Projects: `src/content/projects/*.md`
+- Work experience: `src/content/experience/*.md`
+
+## Deploy (Coolify / Dockerfile)
+
+This repo includes a multi-stage `Dockerfile` that builds the Astro site and serves `dist/` with Nginx.
+
+- Dockerfile: `Dockerfile`
+- Nginx config: `nginx.conf`
+- Container port: `80`
