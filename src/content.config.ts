@@ -28,7 +28,7 @@ const experience = defineCollection({
   schema: z.object({
     title: z.string(),
     dateRange: z.string(),
-    stack: z.string(),
+    stack: z.array(z.string()),
     order: z.number(),
   }),
 });

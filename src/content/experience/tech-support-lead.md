@@ -1,7 +1,7 @@
 ---
 title: Tech Support Lead - FLASH
 dateRange: 2018 - 2021
-stack: Salesforce · JIRA
+stack: [Salesforce, JIRA]
 order: 2
 ---
 

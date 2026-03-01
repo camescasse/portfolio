@@ -1,4 +1,4 @@
-I currently work as a QA Automation Lead at FLASH and building mostly backend-oriented hobby projects on the side.
+I currently work as a Software Engineer in Test, focused on QA and automation projects that improve reliability and delivery workflows.
 
 I am passionate about complex problem solving and building useful software products.
 

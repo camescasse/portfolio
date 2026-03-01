@@ -1,7 +1,7 @@
 ---
 title: Passgen
-url: https://github.com/camescasse/passgen
+url: https://passgen.camescasse.dev
 order: 2
 ---
 
-Simple password generator API built using Express in NodeJS. Takes a POST request with parameters to define what character types and the password length for the generated password. Does not store any generated passwords, only stores date and time and the parameters of any request made to the API.
+Password generator app with a lightweight Svelte frontend backed by a Node/Express API. You can generate passwords directly from the UI by choosing character types and length, while the backend keeps things simple by only logging request metadata and never storing generated passwords.

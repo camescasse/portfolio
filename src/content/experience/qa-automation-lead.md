@@ -1,7 +1,7 @@
 ---
 title: QA Automation Lead - FLASH
 dateRange: 2021 - Present
-stack: Node · TypeScript · C#
+stack: [Node, TypeScript, "C#"]
 order: 1
 ---
 

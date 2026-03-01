@@ -16,15 +16,18 @@
 
 :root {
   --font-family: "Berkeley Mono", monospace;
-  --line-height: 1.2rem;
-  --text-color: #eee;
-  --secondary-text-color: #aaa;
-  --third-text-color: #666;
-  --background-color: #030303;
+  --line-height: 1.5rem;
+  --text-color: #e0e0e8;
+  --secondary-text-color: #8a8a9a;
+  --muted-text-color: #4a4a5a;
+  --accent-color: #6ee7b7;
+  --accent-hover: #a7f3d0;
+  --background-color: #0a0a0f;
+  --surface-color: #12121a;
+  --border-color: #1a1a2e;
   --avatar-size: 15ch;
 
   --font-weight-normal: normal;
-  --font-weight-medium: bold;
   --font-weight-bold: bold;
 
   font-family: var(--font-family);
@@ -46,11 +49,13 @@ html {
 body {
   width: 100%;
   position: relative;
-  margin: calc(3 * var(--line-height)) 0;
+  margin: calc(4 * var(--line-height)) 0;
   padding: var(--line-height) 2ch;
   max-width: calc(min(80ch, round(down, 100%, 1ch)));
   box-sizing: border-box;
 }
+
+/* ── Sections ─────────────────────────────────────────── */
 
 .about,
 .essays,
@@ -58,14 +63,34 @@ body {
 .experience,
 .links {
   margin: calc(3 * var(--line-height)) 0;
+  padding-top: calc(2 * var(--line-height));
+  border-top: 1px solid var(--border-color);
 }
 
-.blog-entry,
-.project-description,
-.job-stack,
-.social-handle {
-  margin-bottom: calc(2 * var(--line-height));
+/* ── Section titles ───────────────────────────────────── */
+
+.about-title,
+.essays-title p,
+.projects-title p,
+.experience-title p,
+.links-title p {
+  color: var(--accent-color);
+  font-weight: var(--font-weight-bold);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
 }
+
+.about-title::before,
+.essays-title p::before,
+.projects-title p::before,
+.experience-title p::before,
+.links-title p::before {
+  content: "> ";
+  color: var(--muted-text-color);
+}
+
+/* ── Header ───────────────────────────────────────────── */
 
 .header {
   height: var(--avatar-size);
@@ -88,50 +113,108 @@ body {
   border-radius: 50%;
 }
 
-.blog-content img {
-  width: 60%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.name {
+  margin: 0;
 }
+
+.description {
+  margin: 0.25rem 0 0;
+}
+
+/* ── Spacing ──────────────────────────────────────────── */
+
+.blog-entry,
+.project-description,
+.social-handle {
+  margin-bottom: calc(2 * var(--line-height));
+}
+
+/* ── Links ────────────────────────────────────────────── */
 
 a {
   text-decoration: none;
-  transition: text-decoration-thickness 1s ease;
+  color: var(--text-color);
+  transition: color 0.2s ease;
+}
+
+a::after {
+  content: " ->";
+  color: var(--muted-text-color);
+  transition: color 0.2s ease;
+}
+
+a[href^="http"]::after,
+a[href^="mailto:"]::after {
+  content: " ↗";
 }
 
 a:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.125rem;
-  text-decoration-thickness: 0.125rem;
+  color: var(--accent-color);
 }
 
-a,
+a:hover::after {
+  color: var(--accent-color);
+}
+
 a:visited,
 a:active,
-a:hover,
 a:focus {
   color: var(--text-color);
 }
 
-a::after {
-  content: url("/images/arrow-link.svg");
-  vertical-align: text-bottom;
+a:visited:hover,
+a:active:hover,
+a:focus:hover {
+  color: var(--accent-color);
 }
+
+/* ── Blog archive / see more ──────────────────────────── */
 
 .blog-archive {
   font-size: 0.8rem;
-  color: var(--third-text-color);
 }
 
-.blog a::after,
-.blog-archive::after {
+.blog-archive a {
+  color: var(--muted-text-color);
+  transition: color 0.2s ease;
+}
+
+.blog-archive a:hover {
+  color: var(--accent-color);
+}
+
+.blog-archive a::after {
+  content: " ->";
+  color: var(--muted-text-color);
+}
+
+.blog-archive a:hover::after {
+  color: var(--accent-color);
+}
+
+/* ── Back home link ───────────────────────────────────── */
+
+.back-home {
+  margin-top: calc(3 * var(--line-height));
+  padding-top: calc(1.5 * var(--line-height));
+  border-top: 1px solid var(--border-color);
+}
+
+.back-home a {
+  color: var(--muted-text-color);
+  font-size: 0.85rem;
+}
+
+.back-home a::after,
+.blog-header a::after {
   content: "";
 }
 
-.back-home {
-  margin-top: calc(2 * var(--line-height));
+.back-home a:hover {
+  color: var(--accent-color);
 }
+
+/* ── Text hierarchy ───────────────────────────────────── */
 
 .description,
 .about-content,
@@ -144,13 +227,26 @@ a::after {
 .project-entry,
 .blog-date,
 .job-date,
-.job-stack,
 .social-entry,
-.blog-header,
+.blog-header {
+  color: var(--muted-text-color);
+}
+
+.blog-date {
+  font-size: 0.85rem;
+}
+
 .blog a,
 .projects .project-entry a {
-  color: var(--third-text-color);
+  color: var(--text-color);
 }
+
+.blog a:hover,
+.projects .project-entry a:hover {
+  color: var(--accent-color);
+}
+
+/* ── Blog header (breadcrumb) ─────────────────────────── */
 
 .blog-header {
   display: flex;
@@ -159,12 +255,68 @@ a::after {
   padding-left: 0;
   margin-left: 0;
   font-size: 0.8rem;
+  color: var(--muted-text-color);
 }
 
 .blog-header li:nth-child(2) {
   margin-left: 1ch;
   margin-right: 1ch;
 }
+
+.blog-header a {
+  color: var(--muted-text-color);
+}
+
+.blog-header a:hover {
+  color: var(--accent-color);
+}
+
+/* ── Blog content ─────────────────────────────────────── */
+
+.blog-content img {
+  width: 100%;
+  display: block;
+  margin: var(--line-height) 0;
+  border-radius: 6px;
+}
+
+.blog-title {
+  margin-bottom: 0.25rem;
+}
+
+.date {
+  color: var(--muted-text-color);
+  font-size: 0.85rem;
+  margin-top: 0;
+}
+
+/* ── Tech stack tags ──────────────────────────────────── */
+
+.job-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5ch;
+  margin-top: 0.75rem;
+  list-style: none;
+  padding: 0;
+}
+
+.job-stack li {
+  font-size: 0.75rem;
+  color: var(--accent-color);
+  background: rgba(110, 231, 183, 0.08);
+  border: 1px solid rgba(110, 231, 183, 0.15);
+  padding: 0.15rem 0.75ch;
+  border-radius: 3px;
+}
+
+.job-title {
+  color: var(--text-color);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 0.25rem;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
 
 @media screen and (min-width: 480px) {
   :root {
@@ -178,7 +330,7 @@ a::after {
     display: grid;
     grid-template-columns: 1fr 3fr;
     justify-items: left;
-    align-items: center;
+    align-items: baseline;
   }
 
   .essays-title,
@@ -191,7 +343,6 @@ a::after {
 
   .blog-entry,
   .project-description,
-  .job-stack,
   .social-handle {
     margin-bottom: 0;
   }
