@@ -1,7 +1,21 @@
-@import url("https://fonts.cdnfonts.com/css/jetbrains-mono-2");
+@font-face {
+  font-family: "Berkeley Mono";
+  src: url("/fonts/TX-02-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Berkeley Mono";
+  src: url("/fonts/TX-02-Bold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  --font-family: "JetBrains Mono", monospace;
+  --font-family: "Berkeley Mono", monospace;
   --line-height: 1.2rem;
   --text-color: #eee;
   --secondary-text-color: #aaa;
@@ -9,9 +23,9 @@
   --background-color: #030303;
   --avatar-size: 15ch;
 
-  --font-weight-normal: 500;
-  --font-weight-medium: 600;
-  --font-weight-bold: 800;
+  --font-weight-normal: normal;
+  --font-weight-medium: bold;
+  --font-weight-bold: bold;
 
   font-family: var(--font-family);
   font-weight: var(--font-weight-normal);
@@ -101,7 +115,7 @@ a:focus {
 }
 
 a::after {
-  content: url("../images/arrow-link.svg");
+  content: url("/images/arrow-link.svg");
   vertical-align: text-bottom;
 }
 

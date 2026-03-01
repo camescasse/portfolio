@@ -1,0 +1,29 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  title: string;
+  date: string;
+  image?: string;
+}
+
+const { title, date, image } = Astro.props;
+---
+
+<BaseLayout title={title} bodyClass="blog">
+  <div>
+    <ol class="blog-header">
+      <li><a href="/">Home</a></li>
+      <li>/</li>
+      <li>{title}</li>
+    </ol>
+    <h3 class="blog-title">{title}</h3>
+    <p class="date">{date}</p>
+  </div>
+  <div class="blog-content">
+    {image && <img src={image} alt="" />}
+    <slot />
+  </div>
+
+  <div class="back-home"><a href="/">&larr; Back to home</a></div>
+</BaseLayout>

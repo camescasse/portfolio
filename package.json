@@ -1,0 +1,27 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Personal portfolio and blog built with Astro.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/camescasse/portfolio.git"
+  },
+  "author": "Eric Camescasse",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/camescasse/portfolio/issues"
+  },
+  "homepage": "https://github.com/camescasse/portfolio#readme",
+  "dependencies": {
+    "astro": "^5.18.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "sharp"]
+  }
+}

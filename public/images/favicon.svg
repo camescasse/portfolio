@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" fill="none" viewBox="0 0 256 256">
+<!-- SVG created with Arrow, by QuiverAI (https://quiver.ai) -->
+  <path d="m127.6 6.5-0.14-0.09-0.13 0.09-0.12-0.09-0.14 0.09-105.1 62.4v118.1l105.7 62.62 106-62.88v-20.77h-22.67v8.19l-83.3 50.32-82.52-50.32v-91.85l82.35-50.33 83.47 50.2v8.65h22.67v-21.91l-106-62.4z" fill="url(#paint0_linear_337_1008)"/>
+  <path d="m198.6 147v6.79h34.96v-6.79h-34.96z" fill="url(#paint0_linear_337_1008)"/>
+  <path d="m120 57.01-57.41 34.61v28.55h40.46v16.37h-40.46v28.39l57.24 33.73 0.17-141.6z" fill="url(#paint0_linear_337_1008)"/>
+  <path d="m135.6 57.01v141.6l57.24-34.08v-11.2h-15.13l-25.36 15.99v-81.57l25.96 15.31h14.53v-10.85l-57.24-35.25z" fill="url(#paint0_linear_337_1008)"/>
+  <defs>
+    <linearGradient id="paint0_linear_337_1008" x1="51.03" x2="171" y1="38.91" y2="229.9" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1D2A64" offset="0"/>
+      <stop stop-color="#22577C" offset=".485"/>
+      <stop stop-color="#36B0A1" offset="1"/>
+    </linearGradient>
+  </defs>
+</svg>
