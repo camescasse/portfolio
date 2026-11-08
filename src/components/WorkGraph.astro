@@ -1,0 +1,271 @@
+---
+import { projects, work } from "../data/cv";
+
+const side = projects.map((project) => ({ name: project.short, meta: project.note, href: `#${project.slug}` }));
+
+const summary = `Work graph. ${work
+  .map((job) => (job.children.length ? `${job.company}, with ${job.children.map((c) => c.name).join(", ")}` : job.company))
+  .join(", then ")}. On the side, ${side.map((s) => s.name).join(" and ")}.`;
+
+type Box = { x: number; y: number; w: number; h: number; name: string; meta?: string; now?: boolean; href?: string };
+
+const NODE_H = 58;
+const CHILD_H = 50;
+const CHILD_GAP = 10;
+
+// Wide layout: jobs in one row, the roles of each job in a column under it, side projects in the last row.
+const wide = (() => {
+  const pillW = 110;
+  const nodeW = 260;
+  const colGap = 30;
+  const top = 25;
+  const mid = top + NODE_H / 2;
+  const boxes: Box[] = [];
+  const edges: string[] = [`M${pillW} ${mid} H${pillW + colGap}`];
+  let bottom = top + NODE_H;
+
+  work.forEach((job, i) => {
+    const x = pillW + colGap + i * (nodeW + colGap);
+    boxes.push({ x, y: top, w: nodeW, h: NODE_H, name: job.company, meta: job.meta, now: job.now });
+    if (i > 0) edges.push(`M${x - colGap} ${mid} H${x}`);
+    const spine = x + 24;
+    job.children.forEach((child, j) => {
+      const y = top + NODE_H + 18 + j * (CHILD_H + CHILD_GAP);
+      boxes.push({ x: x + 48, y, w: nodeW - 48, h: CHILD_H, ...child });
+      edges.push(`M${spine} ${top + NODE_H} V${y + CHILD_H / 2} H${x + 48}`);
+      bottom = Math.max(bottom, y + CHILD_H);
+    });
+  });
+
+  const sideTop = bottom + 64;
+  const sideMid = sideTop + NODE_H / 2;
+  const sideX = pillW + colGap + 40;
+  const sideEdges = [`M${pillW / 2} ${mid + 16} V${sideMid} H${sideX}`];
+  side.forEach((s, i) => {
+    const x = sideX + i * (nodeW + colGap);
+    boxes.push({ x, y: sideTop, w: nodeW, h: NODE_H, ...s });
+    if (i > 0) sideEdges.push(`M${x - colGap} ${sideMid} H${x}`);
+  });
+
+  return {
+    width: pillW + colGap + work.length * (nodeW + colGap) - colGap,
+    height: sideTop + NODE_H + 1,
+    pill: { x: 0, y: mid - 16 },
+    label: { x: pillW / 2 + 11, y: sideTop + 17 },
+    boxes,
+    edges,
+    sideEdges,
+  };
+})();
+
+// Narrow layout: one column. Roles hang off the main spine. Side projects follow a dashed line on the left edge.
+const narrow = (() => {
+  const width = 330;
+  const spine = 55;
+  const boxes: Box[] = [];
+  const edges: string[] = [];
+  let y = 56;
+  let spineEnd = 0;
+
+  work.forEach((job) => {
+    spineEnd = y;
+    boxes.push({ x: 20, y, w: 300, h: NODE_H, name: job.company, meta: job.meta, now: job.now });
+    y += NODE_H;
+    for (const child of job.children) {
+      y += CHILD_GAP + 2;
+      boxes.push({ x: 80, y, w: 240, h: CHILD_H, ...child });
+      edges.push(`M${spine} ${y + CHILD_H / 2} H80`);
+      spineEnd = y + CHILD_H / 2;
+      y += CHILD_H;
+    }
+    y += 24;
+  });
+  edges.unshift(`M${spine} 32 V${spineEnd}`);
+
+  y += 40;
+  const label = { x: 12, y: y - 14 };
+  const sideEdges: string[] = [];
+  let lastSide = 0;
+  for (const s of side) {
+    boxes.push({ x: 20, y, w: 300, h: NODE_H, ...s });
+    lastSide = y + NODE_H / 2;
+    sideEdges.push(`M0 ${lastSide} H20`);
+    y += NODE_H + 14;
+  }
+  sideEdges.unshift(`M8 16 H0 V${lastSide}`);
+
+  return { width, height: y - 13, pill: { x: 0, y: 0 }, label, boxes, edges, sideEdges };
+})();
+
+const layouts = [
+  { id: "wide", ...wide },
+  { id: "narrow", ...narrow },
+];
+---
+
+<figure class="graph">
+  {
+    layouts.map((layout) => (
+      <svg class={layout.id} viewBox={`0 0 ${layout.width} ${layout.height}`} role="img" aria-labelledby={`work-${layout.id}`}>
+        <title id={`work-${layout.id}`}>{summary}</title>
+        <rect x={layout.pill.x} y={layout.pill.y} width="110" height="32" rx="16" class="pill" />
+        <text x={layout.pill.x + 55} y={layout.pill.y + 21} text-anchor="middle" class="meta-text start-text">
+          __start__
+        </text>
+        <path d={layout.edges.join(" ")} class="e" />
+        <path d={layout.sideEdges.join(" ")} class="e side" />
+        <text x={layout.label.x} y={layout.label.y} class="meta-text side-label">
+          on the side
+        </text>
+        {layout.boxes.map((box) => {
+          const node = (
+            <>
+              <rect x={box.x} y={box.y} width={box.w} height={box.h} rx="6" class:list={["nd", { now: box.now }]} />
+              {box.meta ? (
+                <>
+                  <text x={box.x + 14} y={box.y + box.h / 2 - 5} class="name-text">{box.name}</text>
+                  <text x={box.x + 14} y={box.y + box.h / 2 + 15} class="meta-text">{box.meta}</text>
+                </>
+              ) : (
+                <text x={box.x + 14} y={box.y + box.h / 2 + 6} class="name-text">{box.name}</text>
+              )}
+            </>
+          );
+          return box.href ? <a href={box.href}>{node}</a> : <g>{node}</g>;
+        })}
+      </svg>
+    ))
+  }
+  <figcaption class="legend mono-label">
+    <span>Job</span>
+    <span class="dashed">Side project</span>
+    <span class="now">Now</span>
+  </figcaption>
+</figure>
+
+<style>
+  .graph {
+    margin-top: 28px;
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .narrow {
+    display: none;
+    max-width: 360px;
+  }
+
+  .e {
+    fill: none;
+    stroke: var(--edge);
+    stroke-width: 1;
+  }
+
+  .e.side {
+    stroke-dasharray: 4 3;
+  }
+
+  .nd {
+    fill: var(--panel);
+    stroke: var(--border);
+    stroke-width: 1;
+    transition: stroke 0.15s;
+  }
+
+  .nd.now {
+    fill: color-mix(in srgb, var(--accent) 12%, var(--background));
+    stroke: var(--accent);
+  }
+
+  .name-text {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 400;
+    fill: var(--foreground);
+  }
+
+  .meta-text {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    fill: var(--muted-foreground);
+  }
+
+  .pill {
+    fill: transparent;
+    stroke: var(--edge);
+    stroke-width: 1;
+  }
+
+  .start-text {
+    fill: var(--foreground);
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  .side-label {
+    fill: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  a:hover .nd {
+    stroke: var(--accent);
+  }
+
+  a:hover .name-text {
+    fill: var(--accent);
+  }
+
+  a:focus-visible {
+    outline: none;
+  }
+
+  a:focus-visible .nd {
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 26px;
+    color: var(--muted-foreground);
+  }
+
+  .legend span::before {
+    content: "";
+    display: inline-block;
+    width: 28px;
+    margin-right: 8px;
+    vertical-align: middle;
+    border-top: 1px solid var(--edge);
+  }
+
+  .legend .dashed::before {
+    border-top-style: dashed;
+  }
+
+  .legend .now::before {
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    background: var(--accent-subtle);
+  }
+
+  @media (width < 52rem) {
+    .wide {
+      display: none;
+    }
+
+    .narrow {
+      display: block;
+    }
+  }
+</style>

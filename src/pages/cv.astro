@@ -1,0 +1,55 @@
+---
+import SheetHead from "../components/SheetHead.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { profile } from "../data/cv";
+---
+
+<BaseLayout title="CV">
+  <div class="sheets">
+    <section class="sheet">
+      <SheetHead code="CV" label="Curriculum vitae" as="h1" />
+      <p class="lede">
+        Test automation, end-to-end and API testing, and CI for web and mobile products. {profile.location}.
+      </p>
+      <p class="actions mono-label">
+        <a href={profile.cvPdf} download>Download PDF</a>
+        <a href={`mailto:${profile.email}`}>Email</a>
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .lede {
+    max-width: 62ch;
+    margin-top: 28px;
+    font-size: 22px;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .actions a {
+    padding: 7px 12px;
+    border: 1px solid var(--edge);
+    border-radius: 3px;
+    text-decoration: none;
+  }
+
+  .actions a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  @media (width < 48rem) {
+    .lede {
+      font-size: 19px;
+    }
+  }
+</style>

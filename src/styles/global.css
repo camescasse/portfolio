@@ -1,0 +1,270 @@
+@font-face {
+  font-family: "TX-02";
+  src: url("/fonts/TX-02-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "TX-02";
+  src: url("/fonts/TX-02-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "TX-02", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --gutter: 24px;
+  --rail: 88px;
+  --set-end: calc(var(--gutter) + 40px);
+  --page: 1440px;
+
+  --background: #f7f8fa;
+  --foreground: #1d2128;
+  --panel: #eceef2;
+  --edge: #9aa2b0;
+  --muted-foreground: #575e6b;
+  --accent: #1f5fd6;
+  --accent-subtle: #1f5fd61a;
+  --border: #d8dce3;
+  --ring: #1f5fd6;
+  --link-line: #9db5e6;
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: #14171c;
+  --foreground: #dce0e5;
+  --panel: #1c2027;
+  --edge: #4b5361;
+  --muted-foreground: #a9afbc;
+  --accent: #4c8dff;
+  --accent-subtle: #4c8dff24;
+  --border: #2c313a;
+  --ring: #4c8dff;
+  --link-line: #3a5a99;
+
+  color-scheme: dark;
+}
+
+@media (width < 48rem) {
+  :root {
+    --gutter: 16px;
+    --rail: 36px;
+    --set-end: var(--gutter);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+ul,
+ol {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+}
+
+img,
+svg,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--accent-subtle);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip {
+  position: absolute;
+  left: var(--gutter);
+  top: -100px;
+  z-index: 50;
+  padding: 8px 12px;
+  background: var(--background);
+  border: 1px solid var(--border);
+}
+
+.skip:focus {
+  top: var(--gutter);
+}
+
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--page);
+  min-height: 100vh;
+  margin-inline: auto;
+}
+
+.main {
+  flex-grow: 1;
+  padding-left: var(--rail);
+  padding-right: var(--set-end);
+}
+
+/* Sheets: the left rail line with a dot at each sheet head. */
+.sheets {
+  position: relative;
+  padding-block: 16px;
+}
+
+.sheets::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--rail) / -2);
+  border-left: 1px solid var(--border);
+}
+
+.sheet {
+  position: relative;
+  padding-block: 28px 72px;
+  scroll-margin-top: 16px;
+}
+
+.sheet-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted-foreground);
+}
+
+.sheet-head::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(var(--rail) / -2 - 4px);
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.sheet-head .code {
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--accent);
+}
+
+.sheet-head .label {
+  margin: 0;
+  font: inherit;
+  color: var(--accent);
+}
+
+.sheet-head .meta {
+  white-space: nowrap;
+}
+
+.title {
+  position: relative;
+  padding-block: 22px 20px;
+  font-size: 56px;
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.title::after {
+  content: "";
+  position: absolute;
+  right: calc(-1 * var(--set-end));
+  bottom: -1px;
+  left: calc(var(--rail) / -2);
+  border-top: 1px solid var(--border);
+}
+
+.ref {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--link-line);
+  text-underline-offset: 4px;
+}
+
+.ref:hover {
+  text-decoration-color: var(--accent);
+}
+
+@media (width < 48rem) {
+  .title {
+    font-size: 40px;
+  }
+
+  .opt {
+    display: none;
+  }
+}

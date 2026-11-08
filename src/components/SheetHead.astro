@@ -1,0 +1,16 @@
+---
+interface Props {
+  code: string;
+  label: string;
+  meta?: string;
+  as?: "h1" | "h2" | "span";
+}
+
+const { code, label, meta, as: Tag = "h2" } = Astro.props;
+---
+
+<div class="sheet-head mono-label">
+  <span class="code">{code}</span>
+  <Tag class="label">{label}</Tag>
+  {meta && <span class="meta opt">{meta}</span>}
+</div>

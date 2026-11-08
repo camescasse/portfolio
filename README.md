@@ -1,16 +1,16 @@
-# camescasse.dev: portfolio
+# camescas.se: portfolio
 
 Personal portfolio and blog built with Astro.
 
-The site keeps a minimal, terminal-inspired style with a static output, but content is now markdown-driven so it is easier to maintain and expand.
+A static site with a set of numbered sheets: letter, work graph, projects, skills, writing, and contact.
 
-Live site: https://camescasse.dev/
+Live site: https://camescas.se/
 
 ## Stack
 
 - Astro (static output)
-- Berkeley Mono (self-hosted font)
-- Markdown content collections (blog, about, projects, work experience)
+- Hanken Grotesk (Fontsource) and TX-02 (self-hosted, for labels and the nav)
+- Markdown content collection for the blog
 - pnpm
 - Docker + Nginx (for container deploys)
 
@@ -29,10 +29,9 @@ pnpm build
 
 ## Content structure
 
+- Profile, work, projects, skills, and links: `src/data/cv.ts`
 - Blog posts: `src/content/blog/*.md`
-- About: `src/content/about/about.md`
-- Projects: `src/content/projects/*.md`
-- Work experience: `src/content/experience/*.md`
+- CV PDF: `public/cv/eric-camescasse-cv.pdf`. Make it with `build-cv.py` from the resume JSON.
 
 ## Deploy (Coolify / Dockerfile)
 

@@ -1,30 +1,56 @@
 ---
+import "@fontsource-variable/hanken-grotesk";
+import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { profile } from "../data/cv";
+
 interface Props {
-  title: string;
-  bodyClass?: string;
+  title?: string;
+  description?: string;
 }
 
-const { title, bodyClass } = Astro.props;
+const { title, description = `${profile.name}, ${profile.role.toLowerCase()} in ${profile.location}.` } = Astro.props;
+const fullTitle = title ? `${title} · ${profile.name}` : profile.name;
+const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=yes"
-    />
-    <meta name="author" content="Eric Camescasse" />
-    <title>{title}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#14171c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <link rel="preload" href="/fonts/TX-02-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      (function () {
+        var stored = null;
+        try {
+          stored = localStorage.getItem("theme");
+        } catch (e) {}
+        var dark = stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", dark);
+      })();
+    </script>
   </head>
-  <body class={bodyClass}>
-    <slot />
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="shell">
+      <Header />
+      <main id="main" class="main">
+        <slot />
+      </main>
+      <Footer />
+    </div>
   </body>
 </html>
-
-<style is:global>
-  @import "../styles/normalize.css";
-  @import "../styles/styles.css";
-</style>

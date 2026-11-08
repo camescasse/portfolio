@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://camescasse.dev",
+  site: "https://camescas.se",
   // Astro 7 changes the default to "jsx". Keep the Astro 5 whitespace output.
   compressHTML: true,
   vite: {
