@@ -1,38 +1,93 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import SheetHead from "../../components/SheetHead.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { monthStamp, readMinutes } from "../../lib/posts";
 
-const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
-
-function formatDate(date: Date): string {
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const day = String(date.getUTCDate()).padStart(2, "0");
-  const month = months[date.getUTCMonth()];
-  const year = date.getUTCFullYear();
-  return `${day} ${month} ${year}`;
-}
+const posts = (await getCollection("blog")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<BaseLayout title="Essays - Eric Camescasse">
-  <div class="essays">
-    <div class="essays-title">
-      <p>Essays</p>
-    </div>
-
-    {posts.map((post) => (
-      <>
-        <div class="blog-date">
-          <p>{formatDate(post.data.date)}</p>
-        </div>
-        <div class="blog-entry">
-          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-        </div>
-      </>
-    ))}
+<BaseLayout title="Blog">
+  <div class="sheets">
+    <section class="sheet">
+      <SheetHead code="B" label="Blog" meta={`${posts.length} entries`} as="h1" />
+      <ol class="index">
+        {
+          posts.map((post) => (
+            <li class="row">
+              <time class="c-date" datetime={post.data.date.toISOString()}>
+                {monthStamp(post.data.date)}
+              </time>
+              <a class="c-title" href={`/blog/${post.id}/`}>
+                {post.data.title}
+              </a>
+              <span class="c-read">{readMinutes(post.body)} min</span>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
   </div>
-
-  <div class="back-home"><a href="/">&larr; Back to home</a></div>
 </BaseLayout>
+
+<style>
+  .index {
+    margin-top: 28px;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--edge);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) 72px;
+    align-items: baseline;
+    gap: 20px;
+    padding-block: 12px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  .c-title {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 400;
+    text-decoration: none;
+  }
+
+  .c-title:hover {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: var(--edge);
+    text-underline-offset: 4px;
+  }
+
+  .c-date,
+  .c-read {
+    color: var(--muted-foreground);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .c-read {
+    text-align: right;
+  }
+
+  @media (width < 48rem) {
+    .row {
+      grid-template-columns: auto 1fr;
+      gap: 4px 12px;
+      padding-block: 14px;
+    }
+
+    .row .c-title {
+      grid-row: 2;
+      grid-column: 1 / -1;
+    }
+
+    .row .c-read {
+      grid-row: 1;
+      grid-column: 2;
+    }
+  }
+</style>

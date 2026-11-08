@@ -1,0 +1,186 @@
+---
+import { links, profile } from "../data/cv";
+
+const nav = [
+  { label: "CV", href: "/cv" },
+  { label: "Blog", href: "/blog" },
+  ...links.filter((link) => link.href.startsWith("http")).map((link) => ({ label: link.key, href: link.href })),
+  { label: profile.email, href: `mailto:${profile.email}` },
+];
+---
+
+<header class="header">
+  <div class="bar">
+    <a class="home mono-label" href="/">{profile.name}</a>
+    <nav class="nav" aria-label="Main">
+      <ul class="wide">
+        {nav.map((item) => <li><a class="nav-link" href={item.href}>{item.label}</a></li>)}
+      </ul>
+      <button class="icon" type="button" data-theme-toggle aria-label="Toggle theme">
+        <svg class="moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+        </svg>
+        <svg class="sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+        </svg>
+      </button>
+      <details class="menu">
+        <summary class="icon" aria-label="Menu">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </summary>
+        <ul class="drop">
+          {nav.map((item) => <li><a class="nav-link" href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </details>
+    </nav>
+  </div>
+</header>
+
+<script>
+  for (const button of document.querySelectorAll("[data-theme-toggle]")) {
+    button.addEventListener("click", () => {
+      const dark = document.documentElement.classList.toggle("dark");
+      try {
+        localStorage.setItem("theme", dark ? "dark" : "light");
+      } catch {}
+    });
+  }
+</script>
+
+<style>
+  .header {
+    padding: var(--gutter);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .home {
+    font-size: 0.75rem;
+    color: var(--foreground);
+    text-decoration: none;
+  }
+
+  .home:hover {
+    color: var(--accent);
+  }
+
+  .nav,
+  .wide {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  ul {
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-link {
+    display: inline-block;
+    padding: 6px 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--foreground);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .nav-link:hover {
+    border-color: var(--border);
+    color: var(--accent);
+  }
+
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: none;
+    color: var(--foreground);
+    cursor: pointer;
+    list-style: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .icon::-webkit-details-marker {
+    display: none;
+  }
+
+  .icon:hover {
+    border-color: var(--border);
+    color: var(--accent);
+  }
+
+  .icon svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .sun,
+  :global(.dark) .moon {
+    display: none;
+  }
+
+  :global(.dark) .sun {
+    display: block;
+  }
+
+  .menu {
+    position: relative;
+    display: none;
+  }
+
+  .drop {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    min-width: 224px;
+    margin-top: 8px;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--background);
+  }
+
+  .drop .nav-link {
+    display: block;
+  }
+
+  @media (width < 48rem) {
+    .bar {
+      padding: 12px;
+    }
+
+    .wide {
+      display: none;
+    }
+
+    .menu {
+      display: block;
+    }
+  }
+</style>

@@ -1,0 +1,118 @@
+---
+import { profile } from "../data/cv";
+
+const width = 1280;
+const height = 220;
+const horizon = 120;
+const sunX = 1060;
+const sunR = 46;
+
+// A seeded generator gives the same dash pattern on every build.
+function seeded(seed: number) {
+  return () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Engraved sea: rows of broken lines. Rows get wider apart and dashes get longer near the viewer.
+// The dashes under the sun are the glint and use the accent colour.
+const random = seeded(3);
+const rows = 17;
+let sea = "";
+let glint = "";
+for (let k = 0; k < rows; k++) {
+  const t = (k + 1) / rows;
+  const y = (horizon + (height - horizon) * t ** 1.6).toFixed(1);
+  let x = -random() * 40;
+  while (x < width) {
+    const dash = 30 + random() * 160 * (0.4 + t);
+    const gap = 4 + random() * 26 * (1.2 - t);
+    if (Math.abs(x + dash / 2 - sunX) < 46 - k * 1.2) glint += `M${x.toFixed(0)} ${y}h${(dash / 2).toFixed(0)}`;
+    else sea += `M${x.toFixed(0)} ${y}h${dash.toFixed(0)}`;
+    x += dash + gap;
+  }
+}
+
+const rings = [1, 2, 3, 4, 5, 6]
+  .map((i) => (sunR * i) / 6)
+  .map((r) => `M${(sunX - r).toFixed(1)} ${horizon}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(sunX + r).toFixed(1)} ${horizon}`)
+  .join("");
+
+const rays = Array.from({ length: 11 }, (_, i) => ((15 + i * 15) * Math.PI) / 180)
+  .map((a) => {
+    const point = (r: number) => `${(sunX + Math.cos(a) * r).toFixed(1)} ${(horizon - Math.sin(a) * r).toFixed(1)}`;
+    return `M${point(sunR + 10)}L${point(sunR + 22)}`;
+  })
+  .join("");
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <figure class="fig">
+    <svg viewBox={`0 46 ${width} ${height - 46}`} preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
+      <path class="accent" d={rings} />
+      <path class="faint" d={rays} />
+      <line x1="0" y1={horizon} x2={width} y2={horizon} />
+      <path d={sea} />
+      <path class="accent" d={glint} />
+    </svg>
+    <figcaption class="mono-label">
+      <span>Fig. — The Caribbean Sea off Santo Domingo · not to scale</span>
+      <span>{profile.coordinates}</span>
+    </figcaption>
+  </figure>
+  <p class="mono-label copy">© {year} {profile.name}</p>
+</footer>
+
+<style>
+  .footer {
+    padding: 20px var(--set-end) 40px var(--rail);
+    color: var(--muted-foreground);
+  }
+
+  .fig svg {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+  }
+
+  @media (width < 48rem) {
+    .fig svg {
+      height: 140px;
+    }
+  }
+
+  .fig :is(path, line) {
+    fill: none;
+    stroke: var(--edge);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .fig .faint {
+    stroke: var(--border);
+  }
+
+  .fig .accent {
+    stroke: var(--accent);
+  }
+
+  figcaption {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding-top: 10px;
+    text-align: center;
+  }
+
+  .copy {
+    margin-top: 22px;
+    text-align: center;
+  }
+</style>
