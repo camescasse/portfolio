@@ -54,7 +54,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <main id="main" class="main">
         <slot />
       </main>
-      <Footer />
+      <Footer scene={scene} />
     </div>
   </body>
 </html>
