@@ -1,0 +1,360 @@
+---
+// The picture behind the page, with its labels and the small card that opens the page again.
+import { profile } from "../data/cv";
+import { HOURS, SCENES } from "../../scripts/plates/scenes/index.mjs";
+
+const places = Object.values(SCENES).map(({ id, name }) => ({ id, name }));
+const hours = HOURS.map((id) => ({ id, name: id[0].toUpperCase() + id.slice(1) }));
+---
+
+<canvas class="scene" aria-hidden="true" data-scene data-places={JSON.stringify(places)} data-hours={JSON.stringify(hours)}></canvas>
+<button class="mini" type="button" data-card-open hidden aria-label="Show the page">
+  <span class="mini-name mono-label">{profile.name}</span>
+  <span class="mini-hint mono-label">Show</span>
+</button>
+<nav class="labels mono-label" aria-label="Picture" data-labels hidden>
+  <button type="button" data-cycle="place">{places[0].name}</button>
+  <button type="button" data-cycle="hour">{hours[0].name}</button>
+</nav>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>("[data-scene]")!;
+  const labels = document.querySelector<HTMLElement>("[data-labels]")!;
+  const shell = document.querySelector<HTMLElement>(".shell")!;
+  const mini = document.querySelector<HTMLButtonElement>("[data-card-open]")!;
+  const shut = document.querySelector<HTMLButtonElement>("[data-card-close]");
+
+  // The card: the visitor can put it away to see the picture.
+  let top = 0;
+  function setOpen(open: boolean, focus = true) {
+    if (open === !shell.classList.contains("away")) return;
+    if (open) {
+      shell.hidden = false;
+      document.documentElement.classList.remove("picture");
+      void shell.offsetWidth;
+      scrollTo(0, top);
+    } else {
+      top = scrollY;
+      setTimeout(() => (shell.hidden = shell.classList.contains("away")), 360);
+    }
+    shell.classList.toggle("away", !open);
+    // With the card away, the page does not scroll. A scroll gesture then does not move the browser bars.
+    document.documentElement.classList.toggle("picture", !open);
+    shell.inert = !open;
+    mini.hidden = open;
+    if (focus) (open ? shut : mini)?.focus({ preventScroll: true });
+  }
+  shut?.addEventListener("click", () => setOpen(false));
+  mini.addEventListener("click", () => setOpen(true));
+  // A click on the picture puts the card away.
+  canvas.addEventListener("click", () => {
+    if (document.body.classList.contains("painted")) setOpen(false);
+  });
+  addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    // Escape closes the menu first.
+    const menu = document.querySelector<HTMLDetailsElement>("details.menu[open]");
+    if (menu) {
+      menu.open = false;
+      menu.querySelector("summary")?.focus();
+    } else setOpen(shell.classList.contains("away"));
+  });
+
+  type Item = { id: string; name: string };
+  const places: Item[] = JSON.parse(canvas.dataset.places!);
+  const hours: Item[] = JSON.parse(canvas.dataset.hours!);
+  const buttons = {
+    place: labels.querySelector<HTMLButtonElement>('[data-cycle="place"]')!,
+    hour: labels.querySelector<HTMLButtonElement>('[data-cycle="hour"]')!,
+  };
+  const read = (key: string) => {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  };
+  const write = (key: string, value: string) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch {}
+  };
+  const index = (list: Item[], id: string | null) => list.findIndex((item) => item.id === id);
+  // With no stored hour, the hour follows the theme.
+  const themeHour = () => (document.documentElement.classList.contains("dark") ? 2 : 0);
+
+  let place = Math.max(0, index(places, read("plate-place")));
+  let picked = index(hours, read("plate-hour"));
+  let hour = picked < 0 ? themeHour() : picked;
+
+  // The canvas has 1.4 million pixels at most. The worker paints each pixel in software.
+  function size(): [number, number] {
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    const scale = Math.min(devicePixelRatio || 1, 2, Math.sqrt(1.4e6 / (w * h)));
+    return [Math.round(w * scale), Math.round(h * scale)];
+  }
+
+  if ("transferControlToOffscreen" in canvas && window.Worker) {
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const worker = new Worker(new URL("../scripts/scene-worker.js", import.meta.url), { type: "module" });
+    worker.onmessage = () => document.body.classList.add("painted");
+    worker.onerror = () => {
+      worker.terminate();
+      document.body.classList.remove("painted");
+      labels.hidden = true;
+    };
+
+    // seconds is the time for the draw-in.
+    const show = (seconds: number) => {
+      buttons.place.textContent = places[place].name;
+      buttons.hour.textContent = hours[hour].name;
+      buttons.place.setAttribute("aria-label", `Place: ${places[place].name}. Show the next place.`);
+      buttons.hour.setAttribute("aria-label", `Hour: ${hours[hour].name}. Show the next hour.`);
+      worker.postMessage({ place: places[place].id, hour: hours[hour].id, dur: seconds });
+    };
+    // A new place or a new hour puts the card away. The focus stays on the label.
+    buttons.place.addEventListener("click", () => {
+      setOpen(false, false);
+      place = (place + 1) % places.length;
+      write("plate-place", places[place].id);
+      show(7.5);
+    });
+    buttons.hour.addEventListener("click", () => {
+      setOpen(false, false);
+      hour = (hour + 1) % hours.length;
+      picked = hour;
+      write("plate-hour", hours[hour].id);
+      show(6);
+    });
+    new MutationObserver(() => {
+      if (picked < 0 && hour !== themeHour()) {
+        hour = themeHour();
+        show(6);
+      }
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
+    let [width, height] = size();
+    const screen = canvas.transferControlToOffscreen();
+    worker.postMessage({ canvas: screen, still, size: [width, height] }, [screen]);
+    labels.hidden = false;
+    show(6);
+
+    // A phone changes the window height when its address bar moves. Only a real change gets a new canvas.
+    let timer = 0;
+    addEventListener("resize", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const [w, h] = size();
+        if (Math.abs(w - width) < 8 && Math.abs(h - height) < 160) return;
+        [width, height] = [w, h];
+        worker.postMessage({ size: [w, h] });
+      }, 300);
+    });
+  }
+</script>
+
+<style is:global>
+  .scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    /* This width includes the scrollbar. The canvas keeps its size when the page scroll goes off. */
+    width: 100vw;
+    height: 100vh;
+    height: 100lvh;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .painted .scene {
+    opacity: 1;
+  }
+
+  .has-scene {
+    --card-gap: clamp(10px, 4vw, 56px);
+    background: var(--panel);
+  }
+
+  /* The page is a card above the picture. */
+  .has-scene .shell {
+    position: relative;
+    z-index: 1;
+    width: min(1120px, 100% - 2 * var(--card-gap));
+    min-height: 0;
+    margin: var(--card-gap) auto 76px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--background);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.2),
+      0 24px 60px rgb(10 16 30 / 0.36);
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease;
+  }
+
+  .has-scene .shell.away {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    pointer-events: none;
+  }
+
+  /* The display value of the shell is stronger than the hidden attribute. */
+  .has-scene .shell[hidden] {
+    display: none;
+  }
+
+  .picture,
+  .picture body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .picture .scene {
+    touch-action: pinch-zoom;
+  }
+
+  /* The header stays at the top of the window. The page text fades out below it. */
+  .has-scene .header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-radius: 10px 10px 0 0;
+    background: linear-gradient(var(--background) calc(100% - var(--gutter)), transparent);
+  }
+
+  .has-scene .sheet,
+  .has-scene .main {
+    scroll-margin-top: 104px;
+  }
+
+  .mini,
+  .labels button {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--background);
+    color: var(--foreground);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.2),
+      0 6px 16px rgb(10 16 30 / 0.3);
+    cursor: pointer;
+  }
+
+  .mini:hover,
+  .labels button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* The small card has the position and the look of the left end of the pinned header bar. */
+  .mini {
+    position: fixed;
+    top: var(--gutter);
+    left: calc(max(var(--card-gap), (100% - 1120px) / 2) + var(--gutter) + 1px);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 62px;
+    padding: 0 14px 0 20px;
+    border-radius: 6px;
+    animation: mini-in 0.4s ease 0.25s both;
+  }
+
+  .mini[hidden],
+  .labels[hidden] {
+    display: none;
+  }
+
+  .mini-name {
+    font-size: 0.75rem;
+  }
+
+  .mini-hint {
+    padding: 4px 8px;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  @keyframes mini-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .labels {
+    position: fixed;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    z-index: 2;
+    display: flex;
+    gap: 6px;
+  }
+
+  .labels button {
+    padding: 6px 10px;
+    letter-spacing: inherit;
+    text-transform: inherit;
+  }
+
+  /* On a small window the card is almost as wide as the picture. The picture shows above the card. */
+  @media (width < 48rem) {
+    .has-scene .shell {
+      margin-top: 22vh;
+    }
+
+    .mini {
+      height: 58px;
+      padding: 0 12px;
+    }
+
+    /* With the card open, the labels are in the space above the card. They move with the page. */
+    .labels {
+      position: absolute;
+      top: calc(22vh - 54px);
+      right: var(--card-gap);
+      bottom: auto;
+    }
+
+    .picture .labels {
+      position: fixed;
+      top: auto;
+      right: 12px;
+      bottom: max(12px, env(safe-area-inset-bottom));
+    }
+
+    .labels button {
+      min-height: 44px;
+      padding-inline: 14px;
+    }
+  }
+
+  @media (width < 22.5rem) {
+    .has-scene {
+      --card-gap: 6px;
+    }
+
+    .mini {
+      gap: 8px;
+      padding: 0 8px 0 10px;
+    }
+
+    .mini-name {
+      letter-spacing: 0.02em;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scene,
+    .has-scene .shell {
+      transition: none;
+    }
+
+    .mini {
+      animation: none;
+    }
+  }
+</style>

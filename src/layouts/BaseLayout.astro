@@ -3,14 +3,17 @@ import "@fontsource-variable/hanken-grotesk";
 import "../styles/global.css";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
+import Scene from "../components/Scene.astro";
 import { profile } from "../data/cv";
 
 interface Props {
   title?: string;
   description?: string;
+  // The page is a card above the painted picture.
+  scene?: boolean;
 }
 
-const { title, description = `${profile.name}, ${profile.role.toLowerCase()} in ${profile.location}.` } = Astro.props;
+const { title, scene = false, description = `${profile.name}, ${profile.role.toLowerCase()} in ${profile.location}.` } = Astro.props;
 const fullTitle = title ? `${title} · ${profile.name}` : profile.name;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -43,10 +46,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       })();
     </script>
   </head>
-  <body>
+  <body class:list={{ "has-scene": scene }}>
     <a class="skip" href="#main">Skip to content</a>
+    {scene && <Scene />}
     <div class="shell">
-      <Header />
+      <Header closable={scene} />
       <main id="main" class="main">
         <slot />
       </main>

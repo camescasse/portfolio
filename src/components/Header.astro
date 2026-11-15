@@ -1,6 +1,13 @@
 ---
 import { links, profile } from "../data/cv";
 
+interface Props {
+  // Show the control that puts the page away.
+  closable?: boolean;
+}
+
+const { closable = false } = Astro.props;
+
 const nav = [
   { label: "CV", href: "/cv" },
   { label: "Blog", href: "/blog" },
@@ -11,7 +18,16 @@ const nav = [
 
 <header class="header">
   <div class="bar">
-    <a class="home mono-label" href="/">{profile.name}</a>
+    <div class="lead">
+      <a class="home mono-label" href="/">{profile.name}</a>
+      {
+        closable && (
+          <button class="chip mono-label" type="button" data-card-close aria-label="Hide the page. Show the picture.">
+            <span>Hide</span>
+          </button>
+        )
+      }
+    </div>
     <nav class="nav" aria-label="Main">
       <ul class="wide">
         {nav.map((item) => <li><a class="nav-link" href={item.href}>{item.label}</a></li>)}
@@ -65,10 +81,44 @@ const nav = [
     border-radius: 6px;
   }
 
+  .lead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
   .home {
+    overflow: hidden;
     font-size: 0.75rem;
     color: var(--foreground);
     text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* The button is the touch area. The span is the visible chip. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 6px;
+    border: 0;
+    background: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+  }
+
+  .chip span {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .chip:hover span {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .home:hover {
@@ -107,6 +157,7 @@ const nav = [
 
   .icon {
     display: inline-flex;
+    flex: none;
     align-items: center;
     justify-content: center;
     width: 32px;
@@ -172,7 +223,21 @@ const nav = [
 
   @media (width < 48rem) {
     .bar {
-      padding: 12px;
+      gap: 8px;
+      padding: 6px 4px 6px 12px;
+    }
+
+    .nav {
+      gap: 0;
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+    }
+
+    .chip {
+      height: 44px;
     }
 
     .wide {
@@ -181,6 +246,30 @@ const nav = [
 
     .menu {
       display: block;
+    }
+  }
+
+  /* A very narrow window: all parts get smaller so the name stays complete. */
+  @media (width < 22.5rem) {
+    .bar {
+      gap: 4px;
+      padding-left: 10px;
+    }
+
+    .home {
+      letter-spacing: 0.02em;
+    }
+
+    .lead {
+      gap: 2px;
+    }
+
+    .chip {
+      padding: 0 2px;
+    }
+
+    .icon {
+      width: 40px;
     }
   }
 </style>

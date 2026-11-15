@@ -13,7 +13,7 @@ const sheetCount = 6;
 const sheet = (n: number) => `Sheet ${n} of ${sheetCount}`;
 ---
 
-<BaseLayout>
+<BaseLayout scene>
   <div class="sheets">
     <section class="sheet" aria-labelledby="name">
       <SheetHead code="A-01" label="Letter" meta={sheet(1)} as="span" />

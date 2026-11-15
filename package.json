@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "plates": "node scripts/plates/render.mjs"
   },
   "repository": {
     "type": "git",
@@ -28,5 +29,8 @@
       "esbuild",
       "sharp"
     ]
+  },
+  "devDependencies": {
+    "sharp": "0.35.5"
   }
 }
